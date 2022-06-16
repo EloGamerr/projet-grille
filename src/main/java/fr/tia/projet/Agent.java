@@ -66,7 +66,7 @@ public class Agent {
             Cell s1 = trouve_min(Q, d);
 
             if (s1 == null) {
-                return new ArrayList<>();
+                break;
             }
 
             Q.remove(s1);
