@@ -75,6 +75,22 @@ public class Grid {
         }
     }
 
+    public void removeAgent(int row, int col) {
+        Cell cell = this.getCell(row, col);
+        if (cell == null)
+            return;
+
+        synchronized (agents) {
+            System.out.println("valeurs : " + row + " et " + col);
+            System.out.println(this.agents);
+            if (this.agents.containsKey(cell))
+                return;
+
+            Agent agent = this.agents.remove(cell);
+            System.out.println("agent removed!!!");
+        }
+    }
+
     public boolean hasAgent(Cell cell) {
         return this.agents.containsKey(cell);
     }

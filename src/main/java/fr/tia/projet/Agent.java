@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Agent {
     private final Character c;
     private final Grid grid;
-    private final Cell end_case;
+    private Cell end_case; // on enlève final
 
     public Agent(Character c, Grid grid, Cell end_case) {
         this.c = c;
@@ -18,6 +18,14 @@ public class Agent {
 
     public Character getC() {
         return c;
+    }
+
+    public Cell getEndCase() {
+        return end_case;
+    }
+
+    public void setEndCase(Cell cell) {
+        end_case = cell;
     }
 
     public void move() {
