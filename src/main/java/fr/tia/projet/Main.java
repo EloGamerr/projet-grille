@@ -21,14 +21,10 @@ public class Main {
         grid_end.getCell(2, 3).setC('D'); // étoile
 
         System.out.println("Hello, world! " + search_path('B', grid_start, grid_end));
-        // x x A B x
-        // x o c x x
-        // x x x D x
-        // x x x x x
     }
 
     private static Cell search_case(char c, Grid grid) {
-        for (Cell cell : grid.getCells().values()) {
+        for (Cell cell : grid.getCells()) {
             if (cell.getC() != null && cell.getC() == c) {
                 return cell;
             }

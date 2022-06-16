@@ -20,9 +20,8 @@ public class GridSearch {
         return startCell;
     }
 
-
     public Set<Cell> getFreeCells() {
-        return grid.getCells().values().stream().filter(c -> c.getC() == null || c.equals(startCell)).collect(Collectors.toSet());
+        return grid.getCells().stream().filter(c -> c.getC() == null || c.equals(startCell)).collect(Collectors.toSet());
     }
 
     public Cell getCell(int row, int col) {
