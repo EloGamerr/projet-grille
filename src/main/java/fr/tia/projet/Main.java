@@ -20,7 +20,30 @@ public class Main {
         grid_end.setAgent(1, 2, new Agent('C')); // sablier
         grid_end.setAgent(2, 3, new Agent('D')); // étoile
 
-        System.out.println("Hello, world! " + search_path(new Agent('B'), grid_start, grid_end));
+        SwingView view = new SwingView(800, 600, grid_start, grid_end);
+
+        Agent agentRecherche = new Agent('B');
+        ArrayList<Cell> searchPath = search_path(agentRecherche, grid_start, grid_end);
+
+        Grid grid_clone = grid_start.clone();
+
+        System.out.println("Hello, world! " + searchPath);
+
+        System.out.println(grid_clone);
+
+
+        Cell cellAgent = grid_clone.getCellFromAgent(agentRecherche);
+        int lastRow = cellAgent.getRow();
+        int lastCol = cellAgent.getCol();
+        for (int i=searchPath.size()-1;i>=0;i--) {
+            Cell pred = searchPath.get(i);
+            grid_clone.moveAgent(lastRow, lastCol, pred.getRow(), pred.getCol());
+            // view.createGrid(grid_clone);
+        }
+        // x x A B x
+        // x o c x x
+        // x x x D x
+        // x x x x x
     }
 
 
