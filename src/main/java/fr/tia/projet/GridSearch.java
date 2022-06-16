@@ -5,23 +5,23 @@ import java.util.stream.Collectors;
 
 public class GridSearch {
     private final Grid grid;
-    private final Cell startCell;
+    private final Agent agent;
 
-    public GridSearch(Grid grid, Cell startCell) {
+    public GridSearch(Grid grid, Agent agent) {
         this.grid = grid;
-        this.startCell = startCell;
+        this.agent = agent;
     }
 
     public Grid getGrid() {
         return grid;
     }
 
-    public Cell getStartCell() {
-        return startCell;
+    public Agent getAgent() {
+        return agent;
     }
 
     public Set<Cell> getFreeCells() {
-        return grid.getCells().stream().filter(c -> c.getC() == null || c.equals(startCell)).collect(Collectors.toSet());
+        return grid.getCells().stream().filter(cell -> !grid.hasAgent(cell) || grid.getAgent(cell).equals(agent)).collect(Collectors.toSet());
     }
 
     public Cell getCell(int row, int col) {
@@ -30,7 +30,7 @@ public class GridSearch {
 
         Cell cell = grid.getCells().get(row * grid.getColAmount() + col);
 
-        if (cell == null || (cell.getC() != null && !cell.getC().equals(startCell)))
+        if (cell == null || (grid.hasAgent(cell) && !grid.getAgent(cell).equals(agent)))
             return null;
 
         return cell;

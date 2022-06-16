@@ -8,24 +8,24 @@ public class Main {
     public static void main(String[] args) {
         Grid grid_start = new Grid(5, 5);
 
-        grid_start.getCell(0 ,2).setC('A'); // croix-encerclée
-        grid_start.getCell(0, 3).setC('B'); // soleil
-        grid_start.getCell(1, 2).setC('C'); // sablier
-        grid_start.getCell(2, 3).setC('D'); // étoile
+        grid_start.setAgent(0, 2, new Agent('A')); // croix-encerclée
+        grid_start.setAgent(0, 3, new Agent('B')); // soleil
+        grid_start.setAgent(1, 2, new Agent('C')); // sablier
+        grid_start.setAgent(2, 3, new Agent('D')); // étoile
 
         Grid grid_end = new Grid(5, 5);
 
-        grid_end.getCell(0 ,0).setC('A'); // croix-encerclée
-        grid_end.getCell(1, 1).setC('B'); // soleil
-        grid_end.getCell(1, 2).setC('C'); // sablier
-        grid_end.getCell(2, 3).setC('D'); // étoile
+        grid_end.setAgent(0, 0, new Agent('A')); // croix-encerclée
+        grid_end.setAgent(1, 1, new Agent('B')); // soleil
+        grid_end.setAgent(1, 2, new Agent('C')); // sablier
+        grid_end.setAgent(2, 3, new Agent('D')); // étoile
 
-        System.out.println("Hello, world! " + search_path('B', grid_start, grid_end));
+        System.out.println("Hello, world! " + search_path(new Agent('B'), grid_start, grid_end));
     }
 
-    private static Cell search_case(char c, Grid grid) {
+    private static Cell search_case(Agent agent, Grid grid) {
         for (Cell cell : grid.getCells()) {
-            if (cell.getC() != null && cell.getC() == c) {
+            if (grid.hasAgent(cell) && grid.getAgent(cell).equals(agent)) {
                 return cell;
             }
         }
@@ -33,11 +33,11 @@ public class Main {
         return null;
     }
 
-    private static ArrayList<Cell> search_path(char c, Grid grid_start, Grid grid_end) {
-        Cell start_case = search_case(c, grid_start);
-        Cell end_case = search_case(c, grid_end);
+    private static ArrayList<Cell> search_path(Agent agent, Grid grid_start, Grid grid_end) {
+        Cell start_case = search_case(agent, grid_start);
+        Cell end_case = search_case(agent, grid_end);
 
-        GridSearch gridSearch = grid_start.toGridSearch(start_case);
+        GridSearch gridSearch = grid_start.toGridSearch(agent);
 
         ArrayList<Cell> Q = new ArrayList<>();
         Map<Cell, Integer> d = new HashMap<>();

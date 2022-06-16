@@ -5,7 +5,6 @@ import java.util.Objects;
 public class Cell {
     private final int row;
     private final int col;
-    private Character c;
 
     public Cell(int row, int col) {
         this.row = row;
@@ -18,14 +17,6 @@ public class Cell {
 
     public int getCol() {
         return col;
-    }
-
-    public Character getC() {
-        return c;
-    }
-
-    public void setC(Character c) {
-        this.c = c;
     }
 
     @Override
