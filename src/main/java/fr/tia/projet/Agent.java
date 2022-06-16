@@ -9,6 +9,10 @@ public class Agent {
         this.c = c;
     }
 
+    public Character getC() {
+        return c;
+    }
+
     @Override
     public String toString() {
         return c.toString();

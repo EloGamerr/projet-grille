@@ -23,19 +23,11 @@ public class Main {
         System.out.println("Hello, world! " + search_path(new Agent('B'), grid_start, grid_end));
     }
 
-    private static Cell search_case(Agent agent, Grid grid) {
-        for (Cell cell : grid.getCells()) {
-            if (grid.hasAgent(cell) && grid.getAgent(cell).equals(agent)) {
-                return cell;
-            }
-        }
 
-        return null;
-    }
 
     private static ArrayList<Cell> search_path(Agent agent, Grid grid_start, Grid grid_end) {
-        Cell start_case = search_case(agent, grid_start);
-        Cell end_case = search_case(agent, grid_end);
+        Cell start_case = grid_start.getCellFromAgent(agent);
+        Cell end_case = grid_end.getCellFromAgent(agent);
 
         GridSearch gridSearch = grid_start.toGridSearch(agent);
 

@@ -75,4 +75,25 @@ public class Grid {
     public Agent getAgent(Cell cell) {
         return this.agents.get(cell);
     }
+
+    public Cell getCellFromAgent(Agent agent) {
+        for (Cell cell : getCells()) {
+            if (hasAgent(cell) && getAgent(cell).equals(agent)) {
+                return cell;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Grid clone() {
+        Grid grid = new Grid(getRowAmount(), getColAmount());
+
+        for (Map.Entry<Cell, Agent> entry : agents.entrySet()) {
+            grid.setAgent(entry.getKey().getRow(), entry.getKey().getCol(), entry.getValue());
+        }
+
+        return grid;
+    }
 }
