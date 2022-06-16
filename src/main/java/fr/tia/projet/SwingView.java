@@ -114,7 +114,7 @@ public class SwingView implements PropertyChangeListener {
     public JPanel createGrid(Grid grid) {
         JPanel newGrid = new JPanel(new GridLayout(5, 5));
 
-        ArrayList<Cell> cells = grid.getCells();
+        List<Cell> cells = grid.getCells();
         for (Cell cell : cells) {
             JPanel elem = new JPanel();
             JLabel txt = new JLabel();

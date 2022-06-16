@@ -1,14 +1,12 @@
 package fr.tia.projet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Grid {
     private final int rowAmount;
     private final int colAmount;
-    private final ArrayList<Cell> cells;
-    private final Map<Cell, Agent> agents;
+    private final List<Cell> cells;
+    private Map<Cell, Agent> agents;
 
     public Grid(int rowAmount, int colAmount) {
         this.rowAmount = rowAmount;
@@ -23,6 +21,10 @@ public class Grid {
         }
     }
 
+    public void setAgents(Map<Cell, Agent> agents) {
+        this.agents = agents;
+    }
+
     public Cell getCell(int row, int col) {
         if (row < 0 || row >= getRowAmount() || col < 0 || col >= getColAmount())
             return null;
@@ -30,7 +32,7 @@ public class Grid {
         return cells.get(row * getColAmount() + col);
     }
 
-    public ArrayList<Cell> getCells() {
+    public List<Cell> getCells() {
         return cells;
     }
 
@@ -62,10 +64,15 @@ public class Grid {
         if (fromCell == null || toCell == null)
             return;
 
-        Agent agent = this.agents.remove(fromCell);
+        synchronized (agents) {
+            if (this.agents.containsKey(toCell))
+                return;
 
-        if (agent != null)
-            this.agents.put(toCell, agent);
+            Agent agent = this.agents.remove(fromCell);
+
+            if (agent != null)
+                this.agents.put(toCell, agent);
+        }
     }
 
     public boolean hasAgent(Cell cell) {
@@ -86,6 +93,29 @@ public class Grid {
         return null;
     }
 
+    public void display() {
+        for (Cell cell : getCells()) {
+            Character c;
+            Agent agent;
+            synchronized (agents) {
+                agent = getAgent(cell);
+            }
+
+            if (agent != null) {
+                c = agent.getC();
+            } else {
+                c = '0';
+            }
+
+            System.out.print(c + " ");
+
+            if (cell.getCol() == getColAmount()-1) {
+                System.out.println();
+            }
+        }
+        System.out.println();
+    }
+
     @Override
     public Grid clone() {
         Grid grid = new Grid(getRowAmount(), getColAmount());
@@ -95,5 +125,11 @@ public class Grid {
         }
 
         return grid;
+    }
+
+    public void copyAgent(Grid toGrid) {
+        synchronized (agents) {
+            toGrid.setAgents(new HashMap<>(agents));
+        }
     }
 }
