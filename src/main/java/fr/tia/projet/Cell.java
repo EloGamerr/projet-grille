@@ -3,15 +3,21 @@ package fr.tia.projet;
 import java.util.Objects;
 
 public class Cell {
-    private final int id;
+    private final int row;
+    private final int col;
     private Character c;
 
-    public Cell(int id) {
-        this.id = id;
+    public Cell(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
-    public int getId() {
-        return id;
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
     }
 
     public Character getC() {
@@ -24,19 +30,19 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "Ligne : " + String.valueOf(id/5) + " Colonne : " + String.valueOf(id%5);
+        return "Ligne : " + row + " Colonne : " + col;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cell agent = (Cell) o;
-        return id == agent.id;
+        Cell cell = (Cell) o;
+        return row == cell.row && col == cell.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(row, col);
     }
 }
