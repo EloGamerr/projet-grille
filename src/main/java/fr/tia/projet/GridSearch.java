@@ -21,6 +21,10 @@ public class GridSearch {
     }
 
     public Set<Cell> getFreeCells() {
+        if (agent == null) {
+            return grid.getCells().stream().collect(Collectors.toSet());
+        }
+
         return grid.getCells().stream().filter(cell -> !grid.hasAgent(cell) || grid.getAgent(cell).equals(agent)).collect(Collectors.toSet());
     }
 
@@ -30,7 +34,7 @@ public class GridSearch {
 
         Cell cell = grid.getCells().get(row * grid.getColAmount() + col);
 
-        if (cell == null || (grid.hasAgent(cell) && !grid.getAgent(cell).equals(agent)))
+        if (cell == null || (agent != null && grid.hasAgent(cell) && !grid.getAgent(cell).equals(agent)))
             return null;
 
         return cell;

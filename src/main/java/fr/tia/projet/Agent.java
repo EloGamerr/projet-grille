@@ -8,11 +8,13 @@ import java.util.Objects;
 public class Agent {
     private final Character c;
     private final Grid grid;
+    private final Grid grid_clone;
     private Cell end_case; // on enlève final
 
     public Agent(Character c, Grid grid, Cell end_case) {
         this.c = c;
         this.grid = grid;
+        this.grid_clone = grid.clone();
         this.end_case = end_case;
     }
 
@@ -29,8 +31,6 @@ public class Agent {
     }
 
     public void move() {
-        Grid grid_clone = grid.clone();
-
         new Thread(() -> {
             if (end_case != null) {
                 while (!grid.getCellFromAgent(this).equals(end_case)) {
@@ -99,6 +99,17 @@ public class Agent {
         while (s != start_case) {
             path.add(s);
             s = pred.get(s);
+            // Aucun chemin possible vers la destination
+            if (s == null) {
+                if (gridSearch.getAgent() != null) {
+                    // On recalcule avec djikstra mais en considérant
+                    // que les autres agents ne sont pas des obstacles
+                    return search_path(grid_clone.toGridSearch(null), end_case);
+                } else {
+                    return new ArrayList<>();
+                }
+
+            }
         }
 
         path.add(start_case);
