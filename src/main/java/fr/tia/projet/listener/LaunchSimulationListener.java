@@ -13,10 +13,14 @@ public class LaunchSimulationListener extends Listener implements ActionListener
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        try {
-            Simulation.instance().launchSimulation();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new Thread() {
+            public void run() {
+                try {
+                    Simulation.instance().launchSimulation();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }

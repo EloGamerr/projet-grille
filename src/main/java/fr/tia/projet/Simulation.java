@@ -57,8 +57,8 @@ public class Simulation {
     public void addAgentStart(Character c, int rowStart, int colStart) {
         if (c == '\0') {
             System.out.println("on supprime ici");
-            grid_start.removeAgent(rowStart, colStart);
             agents.remove(grid_start.getAgent(grid_start.getCell(rowStart, colStart)));
+            grid_start.removeAgent(rowStart, colStart);
         } else {
             Agent agent = new Agent(c, grid_start, null);
             grid_start.setAgent(rowStart, colStart, agent); // croix-encerclée
@@ -118,13 +118,7 @@ public class Simulation {
             grid_start.display();
             GridController.instance().updateGrid(grid_start);
 
-            Runtime runtime = Runtime.getRuntime();
-            long memory = runtime.totalMemory() - runtime.freeMemory();
-            System.out.println("Used memory is bytes: " + memory);
-            System.out.println("Used memory is megabytes: "
-                    + Main.bytesToMegabytes(memory));
-
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         }
 
         grid_start.display();
