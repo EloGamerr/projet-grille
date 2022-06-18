@@ -9,12 +9,16 @@ public class Agent {
     private Cell end_case; // on enlève final
     private boolean isAlive;
     private boolean stunned;
+    public Set<Message> messagesHistoric;
+    public Set<Agent> agents;
 
     public Agent(Character c, Grid grid, Cell end_case) {
         this.c = c;
         this.grid = grid;
         this.grid_clone = grid.clone();
         this.end_case = end_case;
+        this.messagesHistoric = new HashSet<>();
+        this.agents = new HashSet<>();
     }
 
     public void setAlive(boolean alive) {
@@ -44,7 +48,8 @@ public class Agent {
             while (isAlive) {
                 if (!stunned) {
                     if (!grid.getCellFromAgent(this).equals(end_case)) {
-                        ArrayList<Cell> path = search_path(grid_clone.toGridSearch(this), end_case);
+                        grid.copyAgent(grid_clone);
+                        ArrayList<Cell> path = search_path(grid_clone.toGridSearch(this, new HashSet<>()), end_case);
                         if (path.size() >= 2) {
                             Cell fromCell = path.get(path.size()-1);
                             Cell toCell = path.get(path.size()-2);
@@ -54,12 +59,20 @@ public class Agent {
                             if (agent != null) {
                                 List<Message> messages = Main.messages.getOrDefault(agent, new ArrayList<>());
 
-                                messages.add(new Message(this, fromCell, toCell));
+                                synchronized (messages) {
+                                    Message message = new Message(this, fromCell, toCell);
+                                    if (messagesHistoric.contains(message)) {
+                                        agents.add(agent);
+                                    }
+                                    messages.add(message);
+                                    Main.messages.put(agent, messages);
+                                    messagesHistoric.add(message);
 
-                                Main.messages.put(agent, messages);
+                                }
+                            } else {
+                                Main.messages.getOrDefault(this, new ArrayList<>()).clear();
                             }
                         }
-                        grid.copyAgent(grid_clone);
                     }
                     for (Message message : Main.messages.getOrDefault(this, new ArrayList<>())) {
                         if (message.getTo().equals(grid.getCellFromAgent(this))) {
@@ -74,7 +87,12 @@ public class Agent {
                                     if (message.getFrom().getRow() == message.getTo().getRow()+i && message.getFrom().getCol() == message.getTo().getCol()+j)
                                         continue;
 
-                                    if (grid.moveAgent(message.getTo().getRow(), message.getTo().getCol(), message.getTo().getRow()+i, message.getTo().getCol()+j) == null) {
+                                    if (!grid.canMove(message.getTo().getRow()+i, message.getTo().getCol()+j))
+                                        continue;
+
+                                    Agent agent = grid.moveAgent(message.getTo().getRow(), message.getTo().getCol(), message.getTo().getRow()+i, message.getTo().getCol()+j);
+
+                                    if (agent == null) {
                                         i = 2;
                                         j = 2;
                                         stunned = true;
@@ -84,6 +102,8 @@ public class Agent {
                         }
                     }
                     Main.messages.getOrDefault(this, new ArrayList<>()).clear();
+                } else {
+                    stunned = false;
                 }
 
                 try {
@@ -146,9 +166,13 @@ public class Agent {
                 if (gridSearch.getAgent() != null) {
                     // On recalcule avec djikstra mais en considérant
                     // que les autres agents ne sont pas des obstacles
-                    return search_path(grid_clone.toGridSearch(null), end_case);
+                    return search_path(grid_clone.toGridSearch(null, agents), end_case);
                 } else {
-                    return new ArrayList<>();
+                    if (!gridSearch.getBlockedAgents().isEmpty()) {
+                        return search_path(grid_clone.toGridSearch(null, new HashSet<>()), end_case);
+                    } else {
+                        return new ArrayList<>();
+                    }
                 }
 
             }

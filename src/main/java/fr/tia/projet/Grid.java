@@ -36,8 +36,8 @@ public class Grid {
         return cells;
     }
 
-    public GridSearch toGridSearch(Agent agent) {
-        return new GridSearch(this, agent);
+    public GridSearch toGridSearch(Agent agent, Set<Agent> blockedAgents) {
+        return new GridSearch(this, agent, blockedAgents);
     }
 
     public int getRowAmount() {
@@ -55,6 +55,10 @@ public class Grid {
             return;
 
         this.agents.put(cell, agent);
+    }
+
+    public boolean canMove(int toRow, int toCol) {
+        return this.getCell(toRow, toCol) != null;
     }
 
     public Agent moveAgent(int fromRow, int fromCol, int toRow, int toCol) {
