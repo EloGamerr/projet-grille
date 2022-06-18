@@ -1,21 +1,24 @@
 package fr.tia.projet;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Agent {
     private final Character c;
     private final Grid grid;
     private final Grid grid_clone;
     private Cell end_case; // on enlève final
+    private boolean isAlive;
+    private boolean stunned;
 
     public Agent(Character c, Grid grid, Cell end_case) {
         this.c = c;
         this.grid = grid;
         this.grid_clone = grid.clone();
         this.end_case = end_case;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
     }
 
     public Character getC() {
@@ -31,23 +34,62 @@ public class Agent {
     }
 
     public void move() {
+        this.isAlive = true;
+
+        if (end_case == null) {
+            end_case = grid.getCellFromAgent(this);
+        }
+
         new Thread(() -> {
-            if (end_case != null) {
-                while (!grid.getCellFromAgent(this).equals(end_case)) {
-                    ArrayList<Cell> path = search_path(grid_clone.toGridSearch(this), end_case);
-                    if (path.size() >= 2) {
-                        Cell fromCell = path.get(path.size()-1);
-                        Cell toCell = path.get(path.size()-2);
+            while (isAlive) {
+                if (!stunned) {
+                    if (!grid.getCellFromAgent(this).equals(end_case)) {
+                        ArrayList<Cell> path = search_path(grid_clone.toGridSearch(this), end_case);
+                        if (path.size() >= 2) {
+                            Cell fromCell = path.get(path.size()-1);
+                            Cell toCell = path.get(path.size()-2);
 
-                        grid.moveAgent(fromCell.getRow(), fromCell.getCol(), toCell.getRow(), toCell.getCol());
-                    }
-                    grid.copyAgent(grid_clone);
+                            Agent agent = grid.moveAgent(fromCell.getRow(), fromCell.getCol(), toCell.getRow(), toCell.getCol());
 
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                            if (agent != null) {
+                                List<Message> messages = Main.messages.getOrDefault(agent, new ArrayList<>());
+
+                                messages.add(new Message(this, fromCell, toCell));
+
+                                Main.messages.put(agent, messages);
+                            }
+                        }
+                        grid.copyAgent(grid_clone);
                     }
+                    for (Message message : Main.messages.getOrDefault(this, new ArrayList<>())) {
+                        if (message.getTo().equals(grid.getCellFromAgent(this))) {
+                            for (int i = -1; i <= 1; ++i) {
+                                for (int j = -1; j <= 1; ++j) {
+                                    if (i != 0 && j != 0)
+                                        continue;
+
+                                    if (i == 0 && j == 0)
+                                        continue;
+
+                                    if (message.getFrom().getRow() == message.getTo().getRow()+i && message.getFrom().getCol() == message.getTo().getCol()+j)
+                                        continue;
+
+                                    if (grid.moveAgent(message.getTo().getRow(), message.getTo().getCol(), message.getTo().getRow()+i, message.getTo().getCol()+j) == null) {
+                                        i = 2;
+                                        j = 2;
+                                        stunned = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Main.messages.getOrDefault(this, new ArrayList<>()).clear();
+                }
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }).start();

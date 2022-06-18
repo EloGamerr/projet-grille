@@ -1,16 +1,20 @@
 package fr.tia.projet;
 
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
+    public static Map<Agent, List<Message>> messages;
+
     private static final long MEGABYTE = 1024L * 1024L;
     public static long bytesToMegabytes(long bytes) {
         return bytes / MEGABYTE;
     }
 
     public static void main(String[] args) throws InterruptedException {
+
+        messages = new ConcurrentHashMap<>();
 
         Simulation.instance().defaultGrid();
         Grid grid_start = Simulation.instance().getGridStart();

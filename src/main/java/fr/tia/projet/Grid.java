@@ -57,21 +57,23 @@ public class Grid {
         this.agents.put(cell, agent);
     }
 
-    public void moveAgent(int fromRow, int fromCol, int toRow, int toCol) {
+    public Agent moveAgent(int fromRow, int fromCol, int toRow, int toCol) {
         Cell fromCell = this.getCell(fromRow, fromCol);
         Cell toCell = this.getCell(toRow, toCol);
 
         if (fromCell == null || toCell == null)
-            return;
+            return null;
 
         synchronized (agents) {
             if (this.agents.containsKey(toCell))
-                return;
+                return this.agents.get(toCell);
 
             Agent agent = this.agents.remove(fromCell);
 
             if (agent != null)
                 this.agents.put(toCell, agent);
+
+            return null;
         }
     }
 

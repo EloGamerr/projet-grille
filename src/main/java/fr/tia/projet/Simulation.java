@@ -33,11 +33,11 @@ public class Simulation {
 
     public void defaultGrid() {
         Agent agentA = new Agent('A', grid_start, new Cell(0, 4));
-        Agent agentB = new Agent('B', grid_start, null);
-        Agent agentC = new Agent('C', grid_start, null);
-        Agent agentD = new Agent('D', grid_start, null);
-        Agent agentE = new Agent('E', grid_start, null);
-        Agent agentF = new Agent('F', grid_start, null);
+        Agent agentB = new Agent('B', grid_start, new Cell(0, 1));
+        Agent agentC = new Agent('C', grid_start, new Cell(1, 1));
+        Agent agentD = new Agent('D', grid_start, new Cell(2, 1));
+        Agent agentE = new Agent('E', grid_start, new Cell(3, 1));
+        Agent agentF = new Agent('F', grid_start, new Cell(4, 1));
 
         agents.add(agentA);
         agents.add(agentB);
@@ -47,7 +47,7 @@ public class Simulation {
         agents.add(agentF);
 
         grid_start.setAgent(0, 0, agentA); // croix-encerclée
-        grid_start.setAgent(0, 3, agentB); // soleil
+        grid_start.setAgent(0, 1, agentB); // soleil
         grid_start.setAgent(1, 1, agentC); // sablier
         grid_start.setAgent(2, 1, agentD); // étoile
         grid_start.setAgent(3, 1, agentE); // étoile
@@ -123,6 +123,10 @@ public class Simulation {
 
         grid_start.display();
         GridController.instance().updateGrid(grid_start);
+
+        for (Agent a : agents) {
+            a.setAlive(false);
+        }
     }
 
     private static boolean moveDone(List<Agent> agents) {
