@@ -83,13 +83,10 @@ public class Grid {
             return;
 
         synchronized (agents) {
-            System.out.println("valeurs : " + row + " et " + col);
-            System.out.println(this.agents);
             if (!this.agents.containsKey(cell))
                 return;
 
             Agent agent = this.agents.remove(cell);
-            System.out.println("agent removed!!!");
         }
     }
 

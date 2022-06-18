@@ -11,6 +11,11 @@ public class LaunchSimulationListener extends Listener implements ActionListener
         super(view);
     }
 
+    /**
+     * Appelé lorsqu'on souhaite lancer la simulation
+     * Est exécuté dans un autre thread pour éviter de figer l'application globale
+     * @param actionEvent
+     */
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         new Thread() {

@@ -18,16 +18,22 @@ public class EditAgentListener extends Listener implements ActionListener {
         this.c = c;
     }
 
+    /**
+     * Appelé lorsqu'on appuie sur un bouton sur la grille de début et de fin
+     * Permet d'appeler la méthode de la classe Simulation qui ajoutera/supprimera un agent (soit pour la grille de début, soit pour celle de fin)
+     * @param e
+     */
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
-        Character newC = Simulation.nextChar(this.c);
-        System.out.println("character : " + newC.toString());
+        Character newC = '\0';
+        if (this.c == null || this.c == '\0') {
+            newC = Simulation.instance().getLastCharNotUsed(isStart);
+        }
         if (isStart) {
             Simulation.instance().addAgentStart(newC, this.row, this.col);
         } else {
-            Simulation.instance().addAgentEnd(newC, this.row, this.col);
+            Simulation.instance().addAgentEnd(this.c, newC, this.row, this.col);
         }
-        // SearchSkillsList.instance().addNewSkill(getView().getSkillToAdd());
     }
 
 }
