@@ -116,11 +116,17 @@ public class Simulation {
      * @param colStart la colonne de la grille de début sur laquelle on interagit
      */
     public void addAgentStart(Character c, int rowStart, int colStart) {
+        boolean updateGridEnd = false;
         if (c == '\0') {
             // Suppression de l'agent qui était positionné en rowStart;colStart
             Agent agentToRemove = grid_start.getAgent(grid_start.getCell(rowStart, colStart));
             agents.remove(agentToRemove);
-            charStart.remove(agentToRemove.getC());
+            Character cToRemove = agentToRemove.getC();
+            charStart.remove(cToRemove);
+            if (charEnd.contains(cToRemove)) {
+                charEnd.remove(cToRemove);
+                updateGridEnd = true;
+            }
             grid_start.removeAgent(rowStart, colStart);
         } else {
             // Création d'un agent
@@ -132,6 +138,11 @@ public class Simulation {
 
         // On appelle la vue avec la grille de début pour la notifier du changement
         support.firePropertyChange("gridStartUpdate", null, grid_start);
+        // Si la suppression d'un agent de gauche a entraîné la suppression de celle de droite, alors on met également à jour la grille de fin sur la vue
+        if (updateGridEnd) {
+            updateGridEnd();
+            support.firePropertyChange("gridEndUpdate", null, grid_end);
+        }
     }
 
     /**
