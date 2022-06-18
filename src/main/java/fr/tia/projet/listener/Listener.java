@@ -9,6 +9,10 @@ public class Listener {
         this.view = view;
     }
 
+    /**
+     * Permet de récupérer la vue courante sur laquelle le Listener a été lancé (juste une norme, pas vraiment exploité ici dans ce projet)
+     * @return
+     */
     public SwingView getView() {
         return view;
     }

@@ -16,7 +16,7 @@ public class Main {
         Grid grid_start = Simulation.instance().getGridStart();
         Grid grid_end = Simulation.instance().getGridEnd();
 
-        SwingView view = new SwingView(800, 600, grid_start, grid_end);
+        SwingView view = new SwingView(800, 620, grid_start, grid_end);
 
         // x x A B x
         // x o c x x
