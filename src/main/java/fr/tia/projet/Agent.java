@@ -74,34 +74,37 @@ public class Agent {
                             }
                         }
                     }
-                    for (Message message : Main.messages.getOrDefault(this, new ArrayList<>())) {
-                        if (message.getTo().equals(grid.getCellFromAgent(this))) {
-                            for (int i = -1; i <= 1; ++i) {
-                                for (int j = -1; j <= 1; ++j) {
-                                    if (i != 0 && j != 0)
-                                        continue;
+                    List<Message> messages = Main.messages.getOrDefault(this, new ArrayList<>());
+                    synchronized (messages) {
+                        for (Message message : messages) {
+                            if (message.getTo().equals(grid.getCellFromAgent(this))) {
+                                for (int i = -1; i <= 1; ++i) {
+                                    for (int j = -1; j <= 1; ++j) {
+                                        if (i != 0 && j != 0)
+                                            continue;
 
-                                    if (i == 0 && j == 0)
-                                        continue;
+                                        if (i == 0 && j == 0)
+                                            continue;
 
-                                    if (message.getFrom().getRow() == message.getTo().getRow()+i && message.getFrom().getCol() == message.getTo().getCol()+j)
-                                        continue;
+                                        if (message.getFrom().getRow() == message.getTo().getRow()+i && message.getFrom().getCol() == message.getTo().getCol()+j)
+                                            continue;
 
-                                    if (!grid.canMove(message.getTo().getRow()+i, message.getTo().getCol()+j))
-                                        continue;
+                                        if (!grid.canMove(message.getTo().getRow()+i, message.getTo().getCol()+j))
+                                            continue;
 
-                                    Agent agent = grid.moveAgent(message.getTo().getRow(), message.getTo().getCol(), message.getTo().getRow()+i, message.getTo().getCol()+j);
+                                        Agent agent = grid.moveAgent(message.getTo().getRow(), message.getTo().getCol(), message.getTo().getRow()+i, message.getTo().getCol()+j);
 
-                                    if (agent == null) {
-                                        i = 2;
-                                        j = 2;
-                                        stunned = true;
+                                        if (agent == null) {
+                                            i = 2;
+                                            j = 2;
+                                            stunned = true;
+                                        }
                                     }
                                 }
                             }
                         }
+                        messages.clear();
                     }
-                    Main.messages.getOrDefault(this, new ArrayList<>()).clear();
                 } else {
                     stunned = false;
                 }
