@@ -5,6 +5,10 @@ import java.util.*;
 public class Grid {
     private final int rowAmount;
     private final int colAmount;
+
+    // A noter que le contenu de "cells" ne va jamais être modifié après l'instanciation de la classe
+    // Ceci implique donc que l'accès à "cells" est thread-safe, contrairement à "agents", d'où l'utilisation
+    // du mot clé "synchronized" sur cette dernière variable
     private final List<Cell> cells;
     private Map<Cell, Agent> agents;
 
@@ -36,8 +40,11 @@ public class Grid {
         return cells;
     }
 
-    public GridSearch toGridSearch(Agent agent, Set<Agent> blockedAgents) {
-        return new GridSearch(this, agent, blockedAgents);
+    /**
+     * Création d'une grille de recherche pour l'algorithme de Dijkstra
+      */
+    public GridSearch toGridSearch(Agent agent, Set<Cell> blockedCells) {
+        return new GridSearch(this, agent, blockedCells);
     }
 
     public int getRowAmount() {
@@ -68,7 +75,9 @@ public class Grid {
         if (fromCell == null || toCell == null)
             return null;
 
+        // On rend l'accès à "agents" thread-safe
         synchronized (agents) {
+            // Impossible de faire le déplacement car un agent occupe déjà la cellule de destination
             if (this.agents.containsKey(toCell))
                 return this.agents.get(toCell);
 
@@ -83,14 +92,16 @@ public class Grid {
 
     public void removeAgent(int row, int col) {
         Cell cell = this.getCell(row, col);
+
         if (cell == null)
             return;
 
+        // On rend l'accès à "agents" thread-safe
         synchronized (agents) {
             if (!this.agents.containsKey(cell))
                 return;
 
-            Agent agent = this.agents.remove(cell);
+            this.agents.remove(cell);
         }
     }
 
@@ -135,6 +146,11 @@ public class Grid {
         System.out.println();
     }
 
+    /**
+     * Cette méthode n'est pas thread-safe ! Elle doit être appelée par un seul thread à la fois
+     * Nous n'avons pas rendu la méthode thread-safe car il était inutile de le faire étant donné que cette méthode
+     * n'est jamais utilisée dans plusieurs threads à la fois
+     */
     @Override
     public Grid clone() {
         Grid grid = new Grid(getRowAmount(), getColAmount());
@@ -147,6 +163,7 @@ public class Grid {
     }
 
     public void copyAgent(Grid toGrid) {
+        // On rend l'accès à "agents" thread-safe
         synchronized (agents) {
             toGrid.setAgents(new HashMap<>(agents));
         }

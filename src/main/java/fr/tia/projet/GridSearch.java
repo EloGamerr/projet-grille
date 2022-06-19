@@ -6,28 +6,31 @@ import java.util.stream.Collectors;
 public class GridSearch {
     private final Grid grid;
     private final Agent agent;
-    private final Set<Agent> blockedAgents;
+    private final Set<Cell> blockedCells;
 
-    public GridSearch(Grid grid, Agent agent, Set<Agent> blockedAgents) {
+    public GridSearch(Grid grid, Agent agent, Set<Cell> blockedCells) {
         this.grid = grid;
         this.agent = agent;
-        this.blockedAgents = blockedAgents;
+        this.blockedCells = blockedCells;
     }
 
     public Grid getGrid() {
         return grid;
     }
 
-    public Set<Agent> getBlockedAgents() {
-        return blockedAgents;
+    public Set<Cell> getBlockedCells() {
+        return blockedCells;
     }
 
     public Agent getAgent() {
         return agent;
     }
 
+    /**
+     * @return Toutes les cellules accessibles
+     */
     public Set<Cell> getFreeCells() {
-        return grid.getCells().stream().filter(cell -> !grid.hasAgent(cell) || ((agent == null || grid.getAgent(cell).equals(agent)) && !blockedAgents.contains(grid.getAgent(cell)))).collect(Collectors.toSet());
+        return grid.getCells().stream().filter(cell -> !blockedCells.contains(cell) && (!grid.hasAgent(cell) || agent == null || grid.getAgent(cell).equals(agent))).collect(Collectors.toSet());
     }
 
     public Cell getCell(int row, int col) {
@@ -36,7 +39,7 @@ public class GridSearch {
 
         Cell cell = grid.getCells().get(row * grid.getColAmount() + col);
 
-        if (cell == null || (agent != null && grid.hasAgent(cell) && !grid.getAgent(cell).equals(agent)) || blockedAgents.contains(grid.getAgent(cell)))
+        if (cell == null || (agent != null && grid.hasAgent(cell) && !grid.getAgent(cell).equals(agent)) || blockedCells.contains(cell))
             return null;
 
         return cell;

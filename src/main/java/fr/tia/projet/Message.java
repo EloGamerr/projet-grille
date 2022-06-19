@@ -7,7 +7,6 @@ public class Message {
     private final Cell from;
     private final Cell to;
 
-
     public Message(Agent sender, Cell from, Cell to) {
         this.sender = sender;
         this.from = from;
